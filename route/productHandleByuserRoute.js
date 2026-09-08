@@ -12,8 +12,10 @@ const userLocationmodel = require('../model/userLocationmodel');
 router.use(express.json())
 router.use(express.urlencoded({extended:true}))
 router.use(express.static(path.join(__dirname, "../public")));
+env=require('dotenv').config()
+
 // adding cart
-router.post('/login/:userid/product/:productid/addToCart',async (req,res) => {
+router.post('/login/:userid/product/:productid/addToCart',isUser,async (req,res) => {
     let product=await productmodel.findOne({_id:req.params.productid})
     let user=await usermodel.findOne({_id:req.params.userid})
     const userId=req.params.userid
@@ -27,7 +29,7 @@ router.post('/login/:userid/product/:productid/addToCart',async (req,res) => {
         `);
 })
 // renderin cart
-router.get('/login/:userid/cart',async (req,res) => {
+router.get('/login/:userid/cart',isUser,async (req,res) => {
     let user=await usermodel.findOne({_id:req.params.userid})
     let cartItemIds=user.cart
     let cartItems=await Promise.all(cartItemIds.map(async (id) => {
@@ -37,7 +39,7 @@ router.get('/login/:userid/cart',async (req,res) => {
     res.render('cart',{cartItems,user})
 })
 // remove cart
-router.post('/:userid/remove/cart/:productid/',async (req,res) => {
+router.post('/:userid/remove/cart/:productid/',isUser,async (req,res) => {
     let userId=req.params.userid
     let productid=req.params.productid 
     let objectProductId = new mongoose.Types.ObjectId(productid);
@@ -48,7 +50,7 @@ router.post('/:userid/remove/cart/:productid/',async (req,res) => {
 })
 
 // buying product page rander
-router.post('/login/:userid/product/:productid/buyPage',async (req,res) => {
+router.post('/login/:userid/product/:productid/buyPage',isUser,async (req,res) => {
     let user=await usermodel.findOne({_id:req.params.userid})
     let product=await productmodel.findOne({_id:req.params.productid})
     let locationsId=user.location
@@ -60,7 +62,7 @@ router.post('/login/:userid/product/:productid/buyPage',async (req,res) => {
     res.render("buyPage",{product,user,locations,productsId})
 })
 // payment confirmation
-router.post('/login/:userid/product/:productid/:paid/done',async (req,res) => {
+router.post('/login/:userid/product/:productid/:paid/done',isUser,async (req,res) => {
     let user=await usermodel.findOne({_id:req.params.userid})
     let productsIdStr=req.params.productid
     let productsId = productsIdStr.replace(/[\[\]]/g, '').split(',');
@@ -97,7 +99,7 @@ router.post('/login/:userid/product/:productid/:paid/done',async (req,res) => {
 })
 
 //rendering my cart for buy
-router.post('/login/:id/buyCart',async (req,res) => {
+router.post('/login/:id/buyCart',isUser,async (req,res) => {
     let user=await usermodel.findOne({_id:req.params.id})
     let cartItemIds=user.cart
     let cartItems=await Promise.all(cartItemIds.map(async (id) => {
@@ -113,9 +115,22 @@ router.post('/login/:id/buyCart',async (req,res) => {
 }) 
 
 // rendering my order
-router.get('/login/:id/order',async (req,res) => {
+router.get('/login/:id/order',isUser,async (req,res) => {
     let user=await usermodel.findOne({_id:req.params.id})
     let orders=user.order
     res.render('myOrders',{orders,user})
 })
+
+// authorization
+function isUser(req,res,next) {
+    if (req.cookies.token ==="") {
+        res.send("Authorization denied")
+    }
+    else{
+        let data=jwt.verify(req.cookies.token,process.env.secret)
+        req.user=data
+    }
+    next()
+}
+
 module.exports=router

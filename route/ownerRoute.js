@@ -10,11 +10,14 @@ router.use(express.json())
 router.use(express.urlencoded({extended:true}))
 router.use(express.static(path.join(__dirname, "../public")));
 const ownermodel=require('../model/ownermodel');
+const usermodel=require('../model/usermodel')
 const productmodel = require('../model/productmodel');
+env=require('dotenv').config()
+
 // owner route
 router.get('/',(req,res)=>{
         if (req.cookies.ownerToken) {
-            let data=jwt.verify(req.cookies.ownerToken,"BSandox")
+            let data=jwt.verify(req.cookies.ownerToken,process.env.secret)
             if (data) {
                 res.redirect(`/admin/dashboard/${data.token}`)
             }
@@ -85,7 +88,7 @@ router.post('/login',async (req,res) => {
     if (owner) {
         bcrypt.compare(password,owner.password,function (err,result) {
             if (result) {
-                let token=jwt.sign({"token":owner._id},"BSandox")
+                let token=jwt.sign({"token":owner._id},process.env.secret)
                 res.cookie("ownerToken",token)
                 res.redirect(`/admin/dashboard/${owner._id}`)
             } else {
@@ -106,17 +109,6 @@ router.post('/login',async (req,res) => {
 });
     }
 })
-// authorization
-function isOwner(req,res,next) {
-    if (req.cookies.ownerToken ==="") {
-        res.send("Authorization denied")
-    }
-    else{
-        let data=jwt.verify(req.cookies.ownerToken,"BSandox")
-        req.user=data
-    }
-    next()
-}
 // Delete all products of owner
 router.post('/dashboard/:id/allProduct/delete',isOwner,async(req,res)=>{
     let ownerId=req.params.id
@@ -124,6 +116,11 @@ router.post('/dashboard/:id/allProduct/delete',isOwner,async(req,res)=>{
     let productsIds=owner.products
     await Promise.all(productsIds.map(async(e)=>{
         let product=await productmodel.findOne({_id:e})
+        // removing cart of deleted item
+        await usermodel.updateMany(
+                    { cart: product._id },
+                    { $pull: { cart:product._id } } 
+                );
         // delete product picture from productimage folder
         const filePath = `public\\productImage\\${product.image}`;
         fs.unlinkSync(filePath)
@@ -142,11 +139,23 @@ router.post('/:id/logout', isOwner, async (req, res) => {
             sameSite: "strict",
             path: "/"
         });
-
+        
         // 3. Respond with redirect or status
         return res.redirect("/admin");
     } catch (err) {
         return res.status(500).send("Logout failed");
     }
 });
+
+// authorization
+function isOwner(req,res,next) {
+    if (req.cookies.ownerToken ==="") {
+        res.send("Authorization denied")
+    }
+    else{
+        let data=jwt.verify(req.cookies.ownerToken,process.env.secret)
+        req.user=data
+    }
+    next()
+}
 module.exports = router;

@@ -12,6 +12,7 @@ router.use(express.static(path.join(__dirname, "../public")));
 const usermodel=require('../model/usermodel');
 const productmodel = require('../model/productmodel');
 const ownermodel = require('../model/ownermodel');
+env=require('dotenv').config()
 
 router.get("/:userId/:productId",isUser,async(req,res)=>{
     const userId=req.params.userId
@@ -26,7 +27,7 @@ function isUser(req,res,next) {
         res.send("Authorization denied")
     }
     else{
-        let data=jwt.verify(req.cookies.token,"BSandox")
+        let data=jwt.verify(req.cookies.token,process.env.secret)
         req.user=data
     }
     next()

@@ -11,6 +11,7 @@ router.use(express.static(path.join(__dirname, "../public")));
 const ownermodel=require('../model/ownermodel');
 const productmodel = require('../model/productmodel');
 const usermodel = require('../model/usermodel');
+env=require('dotenv').config()
 
 router.get('/:ownerid/:id/info',isOwner,async(req,res)=>{
     let ownerid = req.params.ownerid;
@@ -26,10 +27,6 @@ router.post('/Side/products/delete/:id',isOwner,async(req,res)=>{
     await usermodel.updateMany(
             { cart: product._id },
             { $pull: { cart:product._id } } 
-        );
-    await usermodel.updateMany(
-            { "cart": product._id },
-            { $pull: { cart:product._id} }
         );
     const filePath = `public\\productImage\\${product.image}`;
     fs.unlinkSync(filePath)
@@ -56,7 +53,7 @@ function isOwner(req,res,next) {
         res.send("Authorization denied")
     }
     else{
-        let data=jwt.verify(req.cookies.ownerToken,"BSandox")
+        let data=jwt.verify(req.cookies.ownerToken,process.env.secret)
         req.user=data
     }
     next()

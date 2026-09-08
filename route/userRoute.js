@@ -13,10 +13,11 @@ const usermodel=require('../model/usermodel')
 const upload = require('../config/multerConfig');
 const ownermodel = require('../model/ownermodel');
 const productmodel = require('../model/productmodel');
+env=require('dotenv').config()
 // GET /route
 router.get('/', (req, res) => {
     if (req.cookies.token) {
-        let data=jwt.verify(req.cookies.token,"BSandox")
+        let data=jwt.verify(req.cookies.token,process.env.secret)
         if (data) {
             res.redirect(`/login/product/${data.token}`)
         }
@@ -78,7 +79,7 @@ router.post('/login',async (req,res) => {
   if (user) {
     bcrypt.compare(password,user.password,function (err,result) {
         if (result) {
-            let token = jwt.sign({ token: user._id }, "BSandox")
+            let token = jwt.sign({ token: user._id }, process.env.secret)
             res.cookie('token',token)
             res.redirect(`/login/product/${user._id}`)
         } else {
@@ -131,7 +132,7 @@ function isUser(req,res,next) {
         res.send("Authorization denied")
     }
     else{
-        let data=jwt.verify(req.cookies.token,"BSandox")
+        let data=jwt.verify(req.cookies.token,process.env.secret)
         req.user=data
     }
     next()

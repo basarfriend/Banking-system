@@ -13,7 +13,7 @@ router.use(cookieParser())
 router.use(express.json())
 router.use(express.urlencoded({extended:true}))
 router.use(express.static(path.join(__dirname, "../public")));
-
+env=require('dotenv').config()
 // setting
 router.get('/:id/setting',isUser,async(req,res)=>{
     let user=await usermodel.findOne({_id:req.params.id})
@@ -142,7 +142,7 @@ function isUser(req,res,next) {
         res.send("Authorization denied")
     }
     else{
-        let data=jwt.verify(req.cookies.token,"BSandox")
+        let data=jwt.verify(req.cookies.token,process.env.secret)
         req.user=data
     }
     next()

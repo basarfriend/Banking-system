@@ -6,7 +6,9 @@ const cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = express.Router({mergeParams:true});
-router.get('/', async(req, res) => {
+env=require('dotenv').config()
+
+router.get('/',isOwner, async(req, res) => {
     let admin =await ownermodel.findOne({_id:req.params.id})
     res.render('productsCreate',{admin:admin});
 });
@@ -32,7 +34,7 @@ function isOwner(req,res,next) {
         res.send("Authorization denied")
     }
     else{
-        let data=jwt.verify(req.cookies.ownerToken,"BSandox")
+        let data=jwt.verify(req.cookies.ownerToken,process.env.secret)
         req.user=data
     }
     next()

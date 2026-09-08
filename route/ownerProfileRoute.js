@@ -5,6 +5,8 @@ const productmodel = require('../model/productmodel');
 const jwt= require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const bcrypt=require('bcrypt')
+env=require('dotenv').config()
+
 router.get('/:id/profile',isOwner,async(req,res)=>{
     let owner=await ownermodel.findOne({_id:req.params.id})
     // res.render('ownerProfile',{owner:owner})
@@ -28,7 +30,7 @@ function isOwner(req,res,next) {
         res.send("Authorization denied")
     }
     else{
-        let data=jwt.verify(req.cookies.ownerToken,"BSandox")
+        let data=jwt.verify(req.cookies.ownerToken,process.env.secret)
         req.user=data
     }
     next()

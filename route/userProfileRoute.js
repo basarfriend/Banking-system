@@ -11,7 +11,7 @@ router.use(express.urlencoded({extended:true}))
 router.use(express.static(path.join(__dirname, "../public")));
 const usermodel = require('../model/usermodel');
 upload=require('../config/multerConfig')
-
+env=require('dotenv').config()
 router.get("/:userId",isUser,async(req,res)=>{
     let user=await usermodel.findOne({_id:req.params.userId})
     res.render("userProfile",{user})
@@ -38,7 +38,7 @@ function isUser(req,res,next) {
         res.send("Authorization denied")
     }
     else{
-        let data=jwt.verify(req.cookies.token,"BSandox")
+        let data=jwt.verify(req.cookies.token,process.env.secret)
         req.user=data
     }
     next()
