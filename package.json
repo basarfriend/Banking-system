@@ -1,0 +1,38 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "BASAR LAIQUE",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@countrystatecity/countries": "^1.0.9",
+    "@countrystatecity/countries-browser": "^1.0.4",
+    "@countrystatecity/timezones": "^1.0.9",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.6.0",
+    "mongoose": "^9.9.4",
+    "mongose": "^0.0.2-security",
+    "multer": "^2.2.0",
+    "nodemon": "^3.1.14",
+    "react-hot-toast": "^2.6.0"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/basarfriend/backend-practice-1.git"
+  },
+  "bugs": {
+    "url": "https://github.com/basarfriend/backend-practice-1/issues"
+  },
+  "homepage": "https://github.com/basarfriend/backend-practice-1#readme"
+}

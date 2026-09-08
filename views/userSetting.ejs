@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings | E-Commerce Engine</title>
+    
+    <!-- Icons & Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Main Engine Stylesheet -->
+    <link rel="stylesheet" href="/css/userSetting.css">
+</head>
+<body class="app-body">
+
+    <!-- Top Navigation Layer -->
+    <header class="app-header">
+        <div class="app-header__brand">
+            <a href="/" class="brand-logo">No Commerce<span class="brand-logo__dot">.</span></a>
+        </div>
+        <div class="app-header__actions">
+            <div class="user-badge" data-tilt data-tilt-scale="1.05">
+                <img src="/images/<%= user.profilepic %>" alt="<%= user.username %>" class="user-badge__avatar">
+                <div class="user-badge__info">
+                    <span class="user-badge__name"><%= user.username %></span>
+                    <span class="user-badge__role">Customer</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout Container -->
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <nav class="sidebar-nav glass-panel">
+                <div class="sidebar-nav__section-title">Overview</div>
+                <a href="/login/profile/id/<%=user._id%>" class="sidebar-nav__item">
+                    <i class="ri-dashboard-3-line"></i> <span>Profile</span>
+                </a>
+                <a href="/login/<%=user._id%>/order" class="sidebar-nav__item">
+                    <i class="ri-shopping-bag-3-line"></i> <span>Orders</span>
+                    <% if (user.orders && user.orders.length > 0) { %>
+                        <span class="nav-badge"><%= user.orders.length %></span>
+                    <% } %>
+                </a>
+                <a href="/login/<%=user._id%>/cart" class="sidebar-nav__item">
+                    <i class="ri-shopping-cart-2-line"></i> <span>Cart</span>
+                    <% if (user.cart && user.cart.length > 0) { %>
+                        <span class="nav-badge nav-badge--accent"><%= user.cart.length %></span>
+                    <% } %>
+                </a>
+
+                <div class="sidebar-nav__section-title">Management</div>
+                <a href="" class="sidebar-nav__item sidebar-nav__item--active">
+                    <i class="ri-settings-4-line"></i> <span>Settings</span>
+                </a>
+                <form action="/user/<%=user._id%>/logout" method="post">
+                <button class="sidebar-nav__item--danger"><i class="ri-logout-box-r-line"></i></i>logout</button>
+                </form>
+            </nav>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content">
+            
+            <header class="content-header">
+                <div class="content-header__titles">
+                    <h1 class="content-header__title">Account Preferences</h1>
+                    <p class="content-header__subtitle">Manage credentials, security protocols, and shipping destinations.</p>
+                </div>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="settings-grid">
+                
+                <!-- Tab Controls Sidebar Card -->
+                <div class="settings-menu glass-panel 3d-card" data-tilt data-tilt-max="4" data-tilt-glare data-tilt-max-glare="0.1">
+                    <button class="tab-btn tab-btn--active" onclick="switchTab(event, 'tab-profile')">
+                        <i class="ri-user-settings-line"></i>
+                        <div class="tab-btn__text">
+                            <span>Profile Info</span>
+                            <small>Name & contacts</small>
+                        </div>
+                    </button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-security')">
+                        <i class="ri-shield-keyhole-line"></i>
+                        <div class="tab-btn__text">
+                            <span>Security</span>
+                            <small>Password & authentication</small>
+                        </div>
+                    </button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-addresses')">
+                        <i class="ri-map-pin-2-line"></i>
+                        <div class="tab-btn__text">
+                            <span>Addresses</span>
+                            <small>Shipping destinations</small>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Tab Panels Area -->
+                <div class="settings-panels">
+                    
+                    <!-- Tab 1: Profile Information -->
+                    <section id="tab-profile" class="tab-content tab-content--active glass-panel">
+                        <div class="panel-header">
+                            <h2 class="panel-header__title">Public Profile</h2>
+                            <p class="panel-header__desc">Update personal information visible across your orders.</p>
+                        </div>
+
+                        <form action="setting/updateProfile" method="post" class="form-stack">
+                            
+                            <!-- 3D Avatar Upload Deck -->
+                            <div class="avatar-deck">
+                                <div class="avatar-deck__preview 3d-card" data-tilt data-tilt-max="15">
+                                    <img id="avatarDisplay" src="/images/<%= user.profilepic %>" alt="Profile Avatar">
+                                    <div class="avatar-deck__glare"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="username">Username</label>
+                                    <div class="input-wrapper">
+                                        <i class="ri-user-line input-icon"></i>
+                                        <input type="text" id="username" name="username" class="form-control" value="<%= user.username %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="email">Email Address</label>
+                                    <div class="input-wrapper">
+                                        <i class="ri-mail-line input-icon"></i>
+                                        <input type="email" id="email" name="email" class="form-control" value="<%= user.email %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="phone">Password</label>
+                                    <div class="input-wrapper">
+                                        <i class="ri-lock-2-line input-icon"></i>
+                                        <input type="password" id="password" name="password" class="form-control"  placeholder="varify Its Really You" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-footer">
+                                <button type="submit" class="btn btn--primary btn--glow">Save Changes</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Tab 2: Security Settings -->
+                    <section id="tab-security" class="tab-content glass-panel">
+                        <div class="panel-header">
+                            <h2 class="panel-header__title">Password & Authentication</h2>
+                            <p class="panel-header__desc">Ensure account safety by keeping password protocols strong.</p>
+                        </div>
+
+                        <form action="setting/updatePassword" method="post" class="form-stack">
+                            <div class="form-group">
+                                <label class="form-label" for="currentPassword">Current Password</label>
+                                <div class="input-wrapper">
+                                    <i class="ri-lock-2-line input-icon"></i>
+                                    <input type="password" id="currentPassword" name="currentPassword" class="form-control" placeholder="••••••••••••" required >
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="newPassword">New Password</label>
+                                    <div class="input-wrapper">
+                                        <i class="ri-lock-password-line input-icon"></i>
+                                        <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="••••••••••••" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$" title="At least 8 characters, including 1 letter and 1 number">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="confirmPassword">Confirm New Password</label>
+                                    <div class="input-wrapper">
+                                        <i class="ri-shield-check-line input-icon"></i>
+                                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="••••••••••••" required>
+                                    </div>
+                                    <!-- Live validation message display -->
+                                    <small id="passwordMatchMsg" class="pass-msg"></small>
+                                </div>
+                            </div>
+
+                            <div class="form-footer">
+                                <button type="submit" class="btn btn--primary btn--glow">Update Security Credentials</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Tab 3: Shipping Addresses -->
+                    <section id="tab-addresses" class="tab-content glass-panel ">
+                        <div class="panel-header panel-header--split">
+                            <div>
+                                <h2 class="panel-header__title">Saved Addresses</h2>
+                                <p class="panel-header__desc">Manage primary locations for swift checkout integration.</p>
+                            </div>
+                            <button class="btn btn--secondary btn--sm locFormBtn">
+                                <i class="ri-add-line"></i> Add Location
+                            </button>
+                        </div>
+                        
+                        <div class="address-grid">
+                            <div class="address-card 3d-card" data-tilt data-tilt-max="8">
+                                <div class="address-card__content">
+                                <%if(locations){%>
+                                    <%locations.map((loc)=>{%>
+                                        <hr>
+                                        <h4 class="address-card__title"><%= user.username %></h4>
+                                        <p class="address-card__text"><%= loc.streetAddress %></p>
+                                        <p class="address-card__text"><%= loc.city %>, <%= loc.state %> - <%= loc.pincode %></p>
+                                        <p class="address-card__phone"><i class="ri-phone-line"></i> <%= user.phone || 'N/A' %></p>
+                                        <div class="address-card__actions">
+                                            <form action="/login/profile/id/<%=user._id%>/location/<%=loc._id%>/remove" method="post">    
+                                                <button type="submit" class="btn-text btn-text--danger">Remove</button>
+                                            </form>
+                                        </div>
+                                        <hr>
+                                        <%})%>
+                                        <%}else{%>
+                                            <p>No addresses found.</p>
+                                            <%}%>
+                                        </div>
+                                
+                            <!-- address add form -->
+                            <div class="form-container hidden ">
+                                <form action="address/upload" method="post">
+                                    <input required name="pincode" type="text" id="pincode" placeholder="Enter 6-digit Pincode" maxlength="6">
+                                    <small class="pinMsg"></small>
+                                    <label for="Country">
+                                        <select required name="country" id="country">
+                                            <option selected disabled value="Default">Choose Country</option>
+                                            <!-- adding option via api -->
+                                        </select>
+                                        <small class="countryMsg">Service Available for only India</small>
+                                    </label>
+                                    <label for="state">
+                                        <select name="state" id="state">
+                                            <!-- adding option via api -->
+                                             <option value="notShowing">Not showing</option>
+                                        </select>
+                                    </label>
+                                    <input required name="city" type="text" placeholder="City" id="city">
+                                    <input required name="streetadress" type="text" placeholder="Street Address" id="streetadress">
+                                    <button type="submit">Deliver to this address</button>
+                                </form>
+                            </div>
+
+                            
+                        </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+            
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <script src="../js/userSetting.js"></script>
+    <script>
+        // Production 3D Tilt Initialization
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+            speed: 1000,
+            perspective: 1200,
+            transition: true
+        });
+
+        // Tab Switcher Controller
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('tab-content--active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('tab-btn--active'));
+            
+            document.getElementById(tabId).classList.add('tab-content--active');
+            event.currentTarget.classList.add('tab-btn--active');
+        }
+
+        // Live Image Preview Streamer
+        function handleImagePreview(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('avatarDisplay').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+               const newPassword = document.getElementById('newPassword');
+               const confirmPassword = document.getElementById('confirmPassword');
+               const matchMsg = document.getElementById('passwordMatchMsg');
+               const submitBtn = document.getElementById('submitBtn');
+           
+               function checkPasswordMatch() {
+                   const passVal = newPassword.value;
+                   const confirmVal = confirmPassword.value;
+
+        // Message hidden if confirm password empty
+        if (confirmVal === '') {
+            matchMsg.innerText = '';
+            matchMsg.className = 'pass-msg';
+            submitBtn.disabled = false;
+            confirmPassword.style.borderColor = 'var(--clr-border)';
+            return;
+        }
+
+        if (passVal === confirmVal) {
+            matchMsg.innerText = '✓ Passwords match';
+            matchMsg.className = 'pass-msg msg-success';
+            confirmPassword.style.borderColor = 'var(--clr-success)';
+            submitBtn.disabled = false;
+        } else {
+            matchMsg.innerText = '✕ Passwords do not match';
+            matchMsg.className = 'pass-msg msg-error';
+            confirmPassword.style.borderColor = 'var(--clr-danger)';
+            submitBtn.disabled = true; // Prevents form submission
+        }
+    }
+
+    newPassword.addEventListener('input', checkPasswordMatch);
+    confirmPassword.addEventListener('input', checkPasswordMatch);
+    </script>
+</body>
+</html>

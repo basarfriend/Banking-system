@@ -1,0 +1,285 @@
+/* NO-COMMERCE authentication UI */
+
+:root {
+  --ink: #17202a;
+  --muted: #66717d;
+  --surface: #f7f9fc;
+  --surface-deep: #e7ecf3;
+  --accent: #2f6fed;
+  --accent-dark: #1d4fba;
+  --danger: #c94d5b;
+  --radius: 1.25rem;
+  --ease-physical: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--surface-deep);
+}
+
+body {
+  min-width: 18rem;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255, 255, 255, 0.95), transparent 30%),
+    radial-gradient(circle at 88% 88%, rgba(47, 111, 237, 0.16), transparent 34%),
+    linear-gradient(135deg, #eef2f7 0%, var(--surface-deep) 100%);
+}
+
+body::before,
+body::after {
+  position: fixed;
+  z-index: -1;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  pointer-events: none;
+  content: "";
+  filter: blur(1px);
+}
+
+body::before {
+  top: -10rem;
+  right: 12%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.72), transparent 68%);
+}
+
+body::after {
+  bottom: -12rem;
+  left: 8%;
+  background: radial-gradient(circle, rgba(47, 111, 237, 0.12), transparent 68%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+.auth-container {
+  display: grid;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  place-items: center;
+}
+
+.auth-card {
+  width: min(100%, 31rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(238, 242, 248, 0.86));
+  box-shadow:
+    1.5rem 1.75rem 3rem rgba(46, 61, 82, 0.18),
+    0.75rem 0.85rem 1.25rem rgba(46, 61, 82, 0.1),
+    -0.7rem -0.7rem 1.25rem rgba(255, 255, 255, 0.92),
+    inset 0.08rem 0.08rem 0 rgba(255, 255, 255, 0.96),
+    inset -0.08rem -0.08rem 0 rgba(157, 172, 193, 0.22);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.auth-form.hidden {
+  display: none;
+}
+
+.form-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.form-subtitle {
+  margin: -0.55rem 0 0.35rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+}
+
+.form-group input {
+  width: 100%;
+  min-height: 3.15rem;
+  padding: 0.85rem 1rem;
+  color: var(--ink);
+  border: 1px solid rgba(151, 164, 181, 0.52);
+  border-radius: 0.75rem;
+  outline: none;
+  background: linear-gradient(145deg, #e9eef5, #fbfcfe);
+  box-shadow:
+    inset 0.22rem 0.25rem 0.45rem rgba(116, 132, 151, 0.16),
+    inset -0.2rem -0.2rem 0.4rem rgba(255, 255, 255, 0.92),
+    0.15rem 0.18rem 0.3rem rgba(93, 109, 130, 0.08);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms var(--ease-physical);
+}
+
+.form-group input::placeholder {
+  color: #8a95a2;
+}
+
+.form-group input:hover {
+  transform: translateY(-1px);
+}
+
+.form-group input:focus {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 0.2rem rgba(47, 111, 237, 0.16),
+    inset 0.22rem 0.25rem 0.45rem rgba(116, 132, 151, 0.16),
+    inset -0.2rem -0.2rem 0.4rem rgba(255, 255, 255, 0.92);
+}
+
+.form-group input:user-invalid:not(:placeholder-shown) {
+  border-color: var(--danger);
+}
+
+.error-message {
+  display: none;
+  color: var(--danger);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.form-group input:user-invalid:not(:placeholder-shown) + .error-message {
+  display: block;
+}
+
+.btn {
+  width: 100%;
+  min-height: 3.25rem;
+  margin-top: 0.35rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 180ms var(--ease-physical), box-shadow 180ms var(--ease-physical), filter 180ms ease;
+}
+
+.btn-primary {
+  color: #ffffff;
+  background: linear-gradient(145deg, #4c87f2 0%, var(--accent) 48%, var(--accent-dark) 100%);
+  box-shadow:
+    0.35rem 0.42rem 0.55rem rgba(29, 79, 186, 0.3),
+    0.75rem 0.9rem 1.15rem rgba(47, 111, 237, 0.16),
+    inset 0.08rem 0.08rem 0 rgba(255, 255, 255, 0.45),
+    inset -0.1rem -0.12rem 0 rgba(15, 54, 133, 0.35);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-0.18rem) scale(1.01);
+  box-shadow:
+    0.45rem 0.55rem 0.75rem rgba(29, 79, 186, 0.34),
+    0.9rem 1.1rem 1.45rem rgba(47, 111, 237, 0.2),
+    inset 0.08rem 0.08rem 0 rgba(255, 255, 255, 0.45),
+    inset -0.1rem -0.12rem 0 rgba(15, 54, 133, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0.12rem) scale(0.985);
+  box-shadow:
+    0.12rem 0.15rem 0.2rem rgba(29, 79, 186, 0.28),
+    inset 0.16rem 0.18rem 0.3rem rgba(15, 54, 133, 0.25),
+    inset -0.06rem -0.06rem 0 rgba(255, 255, 255, 0.24);
+}
+
+.btn:focus-visible,
+.btn-link:focus-visible {
+  outline: 0.2rem solid rgba(47, 111, 237, 0.3);
+  outline-offset: 0.2rem;
+}
+
+.toggle-text {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.btn-link {
+  padding: 0.2rem;
+  color: var(--accent-dark);
+  cursor: pointer;
+  background: transparent;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.2rem;
+  transition: color 160ms ease, text-decoration-color 160ms ease, transform 160ms ease;
+}
+
+.btn-link:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+  transform: translateY(-1px);
+}
+
+input[type="file"] {
+  padding: 0.55rem;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: 0.7rem;
+  padding: 0.45rem 0.7rem;
+  color: var(--accent-dark);
+  border: 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background: rgba(47, 111, 237, 0.12);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+@media (max-width: 30rem) {
+  .auth-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .auth-card {
+    padding: 1.35rem;
+    border-radius: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

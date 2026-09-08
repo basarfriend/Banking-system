@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= user.username %> | Dashboard</title>
+    
+    <!-- Remix Icons & Vanilla Tilt -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <link rel="stylesheet" href="/css/userProfile.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="logo">STORE</div>
+        <div class="user-pill">
+            <span><%= user.username %></span>
+            <img src="/images/<%= user.profilepic %>" alt="Profile Picture">
+        </div>
+    </header>
+
+    <!-- Profile Dashboard Layout -->
+    <div class="container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- 3D Profile Card -->
+            <div class="card glass-card profile-card" data-tilt data-tilt-max="12" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
+                <div class="avatar-wrapper">
+                    <img src="/images/<%= user.profilepic %>" alt="Profile Picture">
+                    <label for="profileUpload" class="edit-btn">
+                            <i class="ri-pencil-line"></i>
+                    </label>
+                </div>
+                <h2><%= user.username %></h2>
+                <p class="email"><%= user.email %></p>
+                
+                <div class="quick-stats">
+                    <div class="stat">
+                        <span class="stat-num"><%= user.cart ? user.cart.length : 0 %></span>
+                        <span class="stat-label">Cart</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-num"><%= user.order ? user.order.length : 0 %></span>
+                        <span class="stat-label">Orders</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="nav-menu glass-card">
+                <a href="/login/product/<%=user._id%>" class="nav-item active">
+                    <i class="ri-dashboard-line"></i> Dashboard
+                </a>
+                <a href="/login/<%=user._id%>/order" class="nav-item">
+                    <i class="ri-shopping-bag-3-line"></i> My Orders
+                </a>
+                <a href="/login/<%=user._id%>/cart" class="nav-item">
+                    <i class="ri-shopping-cart-2-line"></i> My Cart
+                </a>
+                <a href="<%=user._id%>/setting" class="nav-item">
+                    <i class="ri-settings-4-line"></i> Settings
+                </a>
+                <form action="/user/<%=user._id%>/logout" method="post">
+                <button class="nav-item logout"><i class="ri-logout-box-r-line"></i></i>logout</button>
+                </form>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            
+            <!-- 3D Stat Cards -->
+            <div class="stats-grid">
+                
+                <div class="card glass-card stat-card" data-tilt data-tilt-max="15">
+                    <i class="ri-shopping-bag-3-fill card-bg-icon"></i>
+                    <span class="card-title">Total Orders</span>
+                    <h3 class="card-value"><%= user.order ? user.order.length : 0 %></h3>
+                    <a href="/login/<%=user._id%>/order" class="card-link">View Orders &rarr;</a>
+                </div>
+
+                <div class="card glass-card stat-card" data-tilt data-tilt-max="15">
+                    <i class="ri-shopping-cart-2-fill card-bg-icon"></i>
+                    <span class="card-title">Cart Items</span>
+                    <h3 class="card-value"><%= user.cart ? user.cart.length : 0 %></h3>
+                    <a href="/login/<%=user._id%>/cart" class="card-link">View Cart &rarr;</a>
+                </div>
+
+                <div class="card glass-card stat-card" data-tilt data-tilt-max="15">
+                    <i class="ri-phone-fill card-bg-icon"></i>
+                    <span class="card-title">Phone</span>
+                    <h3 class="card-value phone-text"><%= user.phone || 'Not set' %></h3>
+                </div>
+
+            </div>
+
+            <!-- Orders Section -->
+            <section id="orders" class="card glass-card section-box">
+                <div class="section-header">
+                    <h3><i class="ri-truck-line"></i> Recent Orders</h3>
+                </div>
+
+                <% if (!user.order || user.order.length === 0) { %>
+                    <p class="empty-msg">No recent orders found.</p>
+                <% } else { %>
+                    <div class="orders-list">
+                        <% user.order.forEach(item => { %>
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <p class="order-id">Order ID: <span>#<%=item.id%></span></p>
+                                    <p class="order-status">Status: <span class="badge">Processing</span></p>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+            </section>
+
+        </main>
+    </div>
+    
+    <!-- updating picture -->
+    <form action="/login/profile/id/<%=user._id%>/picture/update" method="post" class="Picture-update hidden" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/png, image/jpeg, image/webp" required onchange="this.form.submit()">
+    </form>
+
+    <script>
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
+        let pictureUpdateForm=document.querySelector('.Picture-update');
+        let updatePencil=document.querySelector('.ri-pencil-line');
+        let container=document.querySelector('.container');
+        updatePencil.addEventListener('click',()=>{
+            container.classList.add('hidden');
+            pictureUpdateForm.classList.remove('hidden');
+        });
+
+    </script>
+</body>
+</html>

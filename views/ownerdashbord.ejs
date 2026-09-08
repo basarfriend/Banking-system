@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Product Management</title>
+    <link rel="stylesheet" href="/css/ownerdashbord.css">
+    <!-- Remix Icon for clean, production-ready icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="admin-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="ri-store-3-fill"></i>
+                <span>Admin Panel</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="/admin/dashboard/<%= owner._id %>" class="menu-item active">
+                    <i class="ri-grid-fill"></i> All Products
+                </a>
+                <a href="/owner/<%= owner._id %>/productsCreate" class="menu-item">
+                    <i class="ri-add-circle-fill"></i> Create Product
+                </a>
+                <a href="/admin/dashboard/<%= owner._id %>/profile" class="menu-item">
+                    <i class="ri-user-settings-fill"></i> My Account
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <form action="/admin/<%=owner._id%>/logout" method="post">
+                    <button class="menu-item logout" style="background-color:transparent; border: none;">
+                        <i class="ri-logout-box-r-line"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <div class="main-wrapper">
+
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>Dashboard</h1>
+                    <span class="subtitle">Manage inventory and product catalog</span>
+                </div>
+
+                <div class="header-profile">
+                    <div class="avatar">
+                        <%= owner.username ? owner.username.charAt(0).toUpperCase() : 'A' %>
+                    </div>
+                    <div class="owner-details">
+                        <p class="owner-name"><%= owner.username || 'Owner' %></p>
+                        <p class="owner-role">Store Owner</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="content-container">
+
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <div class="stats-summary">
+                        <h2>Product Catalog (<%= products.length %>)</h2>
+                    </div>
+
+                    <div class="action-buttons">
+                        <% if (products.length > 0) { %>
+                            <button id="openDeleteModalBtn" class="btn btn-danger-outline">
+                                <i class="ri-delete-bin-6-line"></i> Delete All
+                            </button>
+                        <% } %>
+                        <a href="/owner/<%= owner._id %>/productsCreate" class="btn btn-primary">
+                            <i class="ri-add-line"></i> Add New Product
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <% if (products && products.length > 0) { %>
+                    <div class="products-grid">
+                        <% products.forEach(function(product) { %>
+                            <% const finalPrice = Math.round(product.price - (product.price * (product.discount || 0)) / 100); %>
+                            
+                            <div class="product-card">
+                                <!-- Card Media -->
+                                <div class="product-media">
+                                    <img src="/productImage/<%= product.image %>" alt="<%= product.name %>" loading="lazy">
+                                    
+                                    <% if (product.discount > 0) { %>
+                                        <span class="badge discount-badge">-<%= product.discount %>%</span>
+                                    <% } %>
+                                </div>
+
+                                <!-- Card Body Header / Custom Accent -->
+                                <div class="product-accent" style="background-color: <%= product.panelColor || '#4f46e5' %>;"></div>
+
+                                <!-- Card Info -->
+                                <div class="product-info">
+                                    <h3 class="product-title"><%= product.name %></h3>
+
+                                    <div class="price-wrapper">
+                                        <span class="current-price">₹<%= finalPrice.toLocaleString('en-IN') %></span>
+                                        <% if (product.discount > 0) { %>
+                                            <span class="original-price">₹<%= product.price.toLocaleString('en-IN') %></span>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="stock-status">
+                                        <span>Stock:</span>
+                                        <% if (product.stocks > 10) { %>
+                                            <span class="stock-pill stock-ok"><%= product.stocks %> units</span>
+                                        <% } else if (product.stocks > 0) { %>
+                                            <span class="stock-pill stock-low"><%= product.stocks %> remaining</span>
+                                        <% } else { %>
+                                            <span class="stock-pill stock-out">Out of stock</span>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="card-footer">
+                                        <a href="/admin/<%= owner._id %>/<%= product._id %>/info" class="btn btn-secondary btn-full">
+                                            View Details <i class="ri-arrow-right-line"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <!-- Empty State -->
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="ri-inbox-2-line"></i></div>
+                        <h3>No Products Found</h3>
+                        <p>Get started by creating your first product item for your store inventory.</p>
+                        <a href="/owner/<%= owner._id %>/productsCreate" class="btn btn-primary">
+                            <i class="ri-add-line"></i> Create Product
+                        </a>
+                    </div>
+                <% } %>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-icon text-danger">
+                <i class="ri-alert-line"></i>
+            </div>
+            <h3>Delete All Products?</h3>
+            <p>This action is non-reversible. All products linked to your catalog will be permanently removed.</p>
+            
+            <form action="/admin/dashboard/<%= owner._id %>/allProduct/delete" method="post" class="modal-actions">
+                <button type="button" id="closeDeleteModalBtn" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-danger">Confirm Delete</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/ownerdashbord.js"></script>
+</body>
+</html>

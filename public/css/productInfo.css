@@ -1,0 +1,406 @@
+/* ==========================================================================
+   1. CORE DESIGN VARIABLES & BASE SETUP
+   ========================================================================== */
+@import url('https://googleapis.com');
+
+:root {
+  --bg: #e9eef5;
+  --panel: #f7f9fc;
+  --ink: #172033;
+  --muted: #687386;
+  --line: #d8e0eb;
+  --accent: #4361ee;
+  --accent-dark: #2945c7;
+  --error: #ea3a3a;
+  --error-dark: #c42626;
+  
+  /* Glassmorphism & Shadow Foundations */
+  --shadow-dark: rgba(62, 78, 105, .2);
+  --shadow-light: rgba(255, 255, 255, .9);
+  --border-glass: 1px solid rgba(255, 255, 255, .86);
+  --border-subtle: 1px solid rgba(157, 171, 191, .28);
+  
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.55;
+  background: radial-gradient(circle at 5% 0%, #fff 0, transparent 28rem),
+              radial-gradient(circle at 95% 90%, rgba(67, 97, 238, .1), transparent 24rem),
+              linear-gradient(145deg, #f9fbfe, var(--bg) 55%, #dfe6ef);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 4rem) 1rem;
+  gap: 2.5rem;
+}
+
+/* Visibility Control class for the script toggler */
+.hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   2. THE PRODUCT VIEW CARD
+   ========================================================================== */
+.product-page, 
+.product-edit-card {
+  width: min(840px, 100%);
+}
+
+.product-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42% 1fr;
+  gap: 2rem;
+  overflow: hidden;
+  border: var(--border-glass);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(237, 242, 248, .86));
+  box-shadow: 14px 18px 34px var(--shadow-dark), 
+              -10px -10px 22px var(--shadow-light), 
+              inset 0 1px 0 #fff;
+  padding: 2rem;
+}
+
+/* Dynamic background element driven by the product's individual panel color */
+.product-card::before {
+  content: '';
+  position: absolute;
+  top: -10rem;
+  left: -10rem;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  background: var(--panel-color, var(--accent));
+  opacity: 0.06;
+  filter: blur(50px);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   3. PRODUCT IMAGE ELEMENT
+   ========================================================================== */
+.product-image-wrap,
+.product-img-wrapper {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(255, 255, 255, .4);
+  border: var(--border-glass);
+  box-shadow: 4px 6px 14px rgba(62, 78, 105, 0.08);
+}
+
+.product-image,
+.product-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.03);
+}
+
+/* Ribbon badge showing discounts */
+.discount-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: var(--error);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(234, 58, 58, 0.25);
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   4. CONTENT INFORMATION TYPOGRAPHY
+   ========================================================================== */
+.product-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.product-name {
+  margin: 0 0 0.8rem;
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  line-height: 1.15;
+  letter-spacing: -.04em;
+  color: var(--ink);
+}
+
+.product-details {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* Dual Pricing Grid */
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.final-price {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.original-price {
+  font-size: 1.1rem;
+  color: var(--muted);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* Metadata Sub-sections */
+.meta-row {
+  border-top: var(--border-subtle);
+  padding-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.meta-row p {
+  margin: 0.4rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.meta-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-dark);
+  margin-right: 0.4rem;
+}
+
+.meta-value {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   5. ACTIONS, FORMS AND INTERACTIVE FIELDS
+   ========================================================================== */
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.delete-form {
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* Reusable buttons matching previous structural frameworks */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .85rem 1.5rem;
+  font-size: .78rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  border: 0;
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, filter .2s ease;
+  width: 100%;
+}
+
+.btn:hover {
+  filter: brightness(1.04);
+  transform: translateY(-3px) scale(1.01);
+}
+
+.btn:active {
+  transform: translateY(2px);
+}
+
+.btn-edit {
+  color: var(--accent-dark);
+  border: 1px solid rgba(67, 97, 238, .24);
+  background: rgba(255, 255, 255, .6);
+  box-shadow: 4px 6px 12px rgba(62, 78, 105, .08), -4px -4px 9px rgba(255, 255, 255, .8);
+  max-width: 160px;
+}
+
+.btn-delete {
+  color: #fff;
+  background: linear-gradient(145deg, #ff5a5a, #c42626);
+  box-shadow: 0 4px 0 #931717, 0 8px 14px rgba(196, 38, 38, .2), inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+
+.btn-delete:active {
+  box-shadow: 0 1px 0 #931717, 0 3px 6px rgba(196, 38, 38, .1);
+}
+
+/* ==========================================================================
+   6. THE EDIT CONTAINER PANEL
+   ========================================================================== */
+.product-edit-card {
+  border: var(--border-glass);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .95), rgba(241, 245, 250, .9));
+  box-shadow: 12px 16px 32px var(--shadow-dark), inset 0 1px 0 #fff;
+  padding: 2.2rem;
+}
+
+.product-edit-card form {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.product-edit-card .product-img-wrapper {
+  grid-row: span 3;
+  width: 100%;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-field label {
+  color: var(--accent-dark);
+  font-size: .72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.form-field input {
+  width: 100%;
+  padding: .8rem 1.1rem;
+  font-size: .86rem;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .6);
+  border: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 2px 2px 5px rgba(62, 78, 105, 0.04);
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+
+.form-field input:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(67, 97, 238, .12);
+}
+
+.btn-submit {
+  grid-column: span 2;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: .9rem;
+  font-size: .8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(145deg, #5a74ff, #263fc4);
+  box-shadow: 0 4px 0 #20349b, 0 8px 14px rgba(39, 61, 190, .2), inset 0 1px 0 rgba(255, 255, 255, .3);
+  transition: transform .16s ease, box-shadow .16s ease, filter .2s ease;
+}
+
+.btn-submit:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+
+.btn-submit:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #20349b, 0 2px 4px rgba(39, 61, 190, .1);
+}
+
+/* ==========================================================================
+   7. RESPONSIVE MEDIA BREAKPOINTS
+   ========================================================================== */
+@media(max-width: 680px) {
+  .product-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  
+  .product-image-wrap {
+    width: 60%;
+    margin: 0 auto;
+  }
+
+  .product-edit-card form {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .product-edit-card .product-img-wrapper {
+    grid-row: span 1;
+    width: 50%;
+    margin: 0 auto;
+  }
+
+  .btn-submit {
+    grid-column: span 1;
+  }
+
+  .action-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn-edit {
+    max-width: 100%;
+  }
+}
+
+@media(max-width: 420px) {
+  .product-image-wrap,
+  .product-edit-card .product-img-wrapper {
+    width: 100%;
+  }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

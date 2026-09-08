@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NO-COMMERCE | Authentication</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Google Font for Modern UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="auth-container">
+    <div class="auth-card">
+      
+      <!-- Login Form -->
+      <form action="/login" method="POST" id="loginForm" class="auth-form">
+        <a href="/admin">Admin Panel</a>
+        <h2 class="form-title">Login to account</h2>
+        <p class="form-subtitle">Welcome back! Please enter your details.</p>
+
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            name="email" 
+            placeholder="example@domain.com" 
+            pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+            required
+          >
+          <span class="error-message">Valid email address required</span>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            name="password" 
+            placeholder="••••••••" 
+            minlength="6"
+            required
+          >
+          <span class="error-message">Password must be at least 6 characters</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+        
+        <p class="toggle-text">
+          Don't have an account? 
+          <button type="button" id="showSignupBtn" class="btn-link">Signup</button>
+        </p>
+      </form>
+
+      <!-- Signup Form -->
+      <form action="/create" method="POST" enctype="multipart/form-data" id="signupForm" class="auth-form hidden">
+        <h2 class="form-title">Create Account</h2>
+        <p class="form-subtitle">Welcome to NO-COMMERCE!</p>
+
+        <div class="form-group">
+          <label for="username">Full Name</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="John Doe" 
+            pattern="^[A-Za-z\s]{3,30}$" 
+            title="Name should be 3-30 alphabetic characters"
+            required
+          >
+          <span class="error-message">Name must be 3-30 letters (no numbers/special characters)</span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input 
+            type="email" 
+            id="signup-email" 
+            name="email" 
+            placeholder="example@domain.com" 
+            pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+            required
+          >
+          <span class="error-message">Enter a valid email (e.g. user@gmail.com)</span>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone" 
+            placeholder="10-digit Mobile Number" 
+            pattern="^[6-9]\d{9}$" 
+            required
+          >
+          <span class="error-message">Enter a valid 10-digit Indian phone number</span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input 
+            type="password" 
+            id="signup-password" 
+            name="password" 
+            placeholder="••••••••" 
+            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$" 
+            title="At least 8 characters, including 1 letter and 1 number"
+            required
+          >
+          <span class="error-message">Min 8 chars, at least 1 letter and 1 number</span>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Profile Image</label>
+          <input 
+            type="file" 
+            id="image" 
+            name="image" 
+            accept="image/png, image/jpeg, image/webp" 
+            required
+          >
+          <span class="error-message">Please select a valid image (PNG/JPG/WEBP)</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create My Account</button>
+        
+        <p class="toggle-text">
+          Already have an account? 
+          <button type="button" id="showLoginBtn" class="btn-link">Login</button>
+        </p>
+      </form>
+
+    </div>
+  </main>
+
+  <script src="/js/index.js"></script>
+</body>
+</html>

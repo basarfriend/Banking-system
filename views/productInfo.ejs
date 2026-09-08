@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= product.name %></title>
+  <link rel="stylesheet" href="/css/productInfo.css" />
+</head>
+<body>
+
+  <div class="product-page">
+    <div class="product-card" style="--panel-color: <%= product.panelColor %>;">
+
+      <div class="product-image-wrap">
+        <img
+          src="/productImage/<%= product.image %>"
+          alt="<%= product.name %>"
+          class="product-image"
+        />
+        <% if (product.discount && product.discount > 0) { %>
+          <span class="discount-badge">-<%= product.discount %>%</span>
+        <% } %>
+      </div>
+
+      <div class="product-info">
+        <h1 class="product-name"><%= product.name %></h1>
+
+        <p class="product-details"><%= product.details %></p>
+
+        <div class="price-row">
+          <% if (product.discount && product.discount > 0) { %>
+            <span class="original-price">₹<%= product.price %></span>
+            <span class="final-price">
+              ₹<%= Math.round(product.price - (product.price * product.discount) / 100) %>
+            </span>
+          <% } else { %>
+            <span class="final-price">₹<%= product.price %></span>
+          <% } %>
+        </div>
+
+        <div class="meta-row">
+          <span class="meta-label">Seller:</span>
+          <span class="meta-value"><%= owner.username %></span>
+          <p>Stocks: <%=product.stocks%> Piece</p>
+        </div>
+
+        <div class="action-row">
+          <a class="btn btn-edit">Edit</a>
+
+          <form
+            action="/admin/Side/products/delete/<%= product._id %>"
+            method="POST"
+            class="delete-form"
+            onsubmit="return confirm('Are you sure you want to delete this product?');"
+          >
+            <button type="submit" class="btn btn-delete">Delete this product</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- edit product -->
+  <div class="product-edit-card hidden">
+  <form action="/admin/side/product/edit/<%= product._id %>" method="POST">
+    
+    <div class="product-img-wrapper">
+      <img src="/productImage/<%=product.image %>" alt="Product Image">
+    </div>
+
+    <div class="form-field">
+      <label for="price">Price</label>
+      <input 
+        type="number" 
+        id="price"
+        name="price" 
+        value="<%= product.price %>" 
+        placeholder="Edit price of this item" 
+        step="0.01" 
+        min="0"
+        required 
+      />
+    </div>
+
+    <div class="form-field">
+      <label for="discount">Discount (%)</label>
+      <input 
+        type="number" 
+        id="discount"
+        name="discount" 
+        value="<%= product.discount %>" 
+        placeholder="Edit discount of this product" 
+        step="0.1" 
+        min="0"
+        max="100"
+        required 
+      />
+    </div>
+
+    <div class="form-field">
+      <label for="price">Stocks</label>
+      <input 
+        type="number" 
+        id="stocks"
+        name="stocks" 
+        value="<%= product.stocks %>" 
+        placeholder="Edit stocks " 
+        step="0.01" 
+        min="0"
+        required 
+      />
+    </div>
+
+    <button type="submit" class="btn-submit">Edit</button>
+
+  </form>
+</div>
+</body>
+<script src="/js/productInfo.js"></script>
+</html>

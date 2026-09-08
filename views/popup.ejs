@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || "Success" %></title>
+    <link rel="stylesheet" href="/css/popup.css">
+</head>
+
+<body>
+
+    <div class="success-container">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h1><%= title || "Success!" %></h1>
+
+        <p>
+            <%= message || "Your request has been completed successfully." %>
+        </p>
+
+        <a href="<%= buttonUrl %>" class="success-btn">
+            <%= buttonText || "Continue" %>
+        </a>
+
+    </div>
+
+</body>
+</html>

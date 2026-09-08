@@ -1,0 +1,178 @@
+<!-- views/payment.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Method</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/payment.css">
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <%
+    // product ek object ho ya array — dono case handle
+    const products = Array.isArray(product) ? product : [product];
+    const subtotal = products.reduce((sum, p) => sum + Number(p.price), 0);
+    const shipping = 50;
+    let total  = shipping
+    products.forEach(async (e) => {
+            const discountAmount = (e.price * e.discount) / 100;
+            const finalItemPrice = e.price - discountAmount;
+            total += finalItemPrice;
+        })
+  %>
+
+  <div class="payment-container">
+
+    <div class="payment-header">
+      <h1>Complete Your Purchase</h1>
+      <p>Secure Payment Processing</p>
+    </div>
+
+    <div class="payment-wrapper">
+
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+
+        <div class="summary-items">
+          <% products.forEach(p => { %>
+            <div class="order-item">
+              <span class="item-name"><%= p.name %></span>
+              <span class="item-price">₹<%= Number(p.price).toLocaleString('en-IN') %></span>
+            </div>
+            <%let discountPrice = p.price - (p.price * (p.discount / 100));%>
+            <div class="order-item">
+              <span class="item-name"><%= p.discount%>%    discount</span>
+              <span class="item-price">₹<%= discountPrice.toLocaleString('en-IN') %></span>
+            </div>
+          <% }) %>
+        </div>
+        <div class="order-item">
+          <span class="item-name">Shipping</span>
+          <span class="item-price">₹<%= shipping %></span>
+          
+        </div>
+
+        <div class="order-divider"></div>
+
+        <div class="order-total">
+          <span class="total-label">Total Amount</span>
+          <span class="total-price">₹<%= total.toLocaleString('en-IN') %></span>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="payment-methods">
+        <h2>Select Payment Method</h2>
+
+        <form action="/login/<%=user._id%>/product/[<%=productsId%>]/<%=total%>/done" method="post">
+
+          <!-- hidden field for all product ids -->
+          <input type="hidden" name="productIds" value="<%= products.map(p => p._id).join(',') %>">
+
+          <div class="method-options">
+            <label class="method-option">
+              <input type="radio" name="paymentMethod" value="creditCard" checked>
+              <div class="option-content">
+                <span class="method-icon">💳</span>
+                <span class="method-name">Credit Card</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Address Selection -->
+          <div class="address-section">
+            <h3>Choose Delivery Address</h3>
+
+            <% if (locations && locations.length > 0) { %>
+              <div class="address-list">
+                <% locations.forEach((loc, i) => { %>
+                  <label class="address-card">
+                    <input type="radio" name="locate" value="<%= loc._id %>" <%= i === 0 ? 'checked' : '' %>>
+                    <div class="address-card__content">
+                      <div class="address-card__top">
+                        <h4 class="address-card__title"><%= user.username %></h4>
+                        <span class="address-tag">Home</span>
+                      </div>
+                      <p class="address-card__text"><%= loc.streetAddress %></p>
+                      <p class="address-card__text"><%= loc.city %>, <%= loc.state %> - <%= loc.pincode %></p>
+                      <p class="address-card__phone">📞 <%= user.phone || 'N/A' %></p>
+                    </div>
+                  </label>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="no-address">No addresses found. Please add one to continue.</p>
+              <p onclick="location.href='/login/profile/id/<%=user._id%>/setting' " style="cursor: pointer; border: 2px solid rgb(243, 243, 243); background-color:red;">Add location</p>
+            <% } %>
+          </div>
+          <!-- Card Details -->
+          <div id="cardDetails" class="payment-form-section"> 
+            <h3>Card Details</h3>
+
+            <div class="form-group">
+              <label for="cardName">Cardholder Name</label>
+              <input type="text" id="cardName" name="cardName" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-group">
+              <label for="cardNumber">Card Number</label>
+              <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="expiryDate">Expiry Date</label>
+                <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" maxlength="5" required>
+              </div>
+              <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="terms-section">
+            <label class="checkbox-label">
+              <input type="checkbox" name="terms" required>
+              <span>I agree to the terms and conditions</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="newsletter">
+              <span>Subscribe me to the newsletter</span>
+            </label>
+          </div>
+
+          <button type="submit" class="pay-button">Pay ₹<%= total.toLocaleString('en-IN') %></button>
+        </form>
+
+        <p class="security-note">🔒 Your payment information is secure and encrypted.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('cardNumber').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s/g, '');
+      e.target.value = value.match(/.{1,4}/g)?.join(' ') || value;
+    });
+
+    document.getElementById('expiryDate').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) value = value.substring(0, 2) + '/' + value.substring(2, 4);
+      e.target.value = value;
+    });
+
+    document.getElementById('cvv').addEventListener('input', function(e) {
+      e.target.value = e.target.value.replace(/\D/g, '');
+    });
+  </script>
+</body>
+</html>

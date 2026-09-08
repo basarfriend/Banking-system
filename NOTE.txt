@@ -1,0 +1,740 @@
+=========================================================================================================================
+NODE.JS + EXPRESS + MONGODB NOTES
+=========================================================================================================================
+
+=================================================
+FS (File System)
+=================================================
+
+writeFile
+-> New file banata hai.
+-> Agar file pehle se hai to uska content overwrite kar deta hai.
+
+appendFile
+-> Existing file ke end me data add karta hai.
+
+rename
+-> File ya folder ka naam change karta hai.
+
+copyFile
+-> File ki copy banata hai.
+
+unlink
+-> Sirf file delete karta hai.
+
+rmdir
+-> Sirf blank folder delete karta hai.
+
+rm(path,{recursive:true})
+-> Folder delete karta hai.
+-> Folder blank ho ya uske andar files ho.
+
+Example:
+
+fs.readdir('./files',function(err,files){
+    res.render('index',{files});
+})
+
+-> Folder ke andar ki sari files read karta hai.
+
+--------------------------------------------------
+
+fs.readFile(`./files/${req.params.filename}`,'utf8',function(err,filedata){
+
+    const task={
+        taskname:req.params.filename,
+        filedata
+    }
+
+    res.render("task",{task});
+
+})
+
+-> File ka content read karta hai.
+
+=========================================================================================================================
+
+=================================================
+HTTP
+=================================================
+
+Protocol = Rules
+
+HTTP aur HTTPS protocol ki wajah se browser aur server ek dusre se communicate kar pate hain.
+
+Without protocol internet communication possible nahi hai.
+
+HTTP
+-> Not Secure
+
+HTTPS
+-> Secure
+
+Example
+
+const http=require("http")
+
+const server=http.createServer(function(req,res){
+
+    res.end("My name is BASAR")
+
+})
+
+server.listen(1111)
+
+=========================================================================================================================
+
+=================================================
+NPM
+=================================================
+
+Install package
+
+npm i packageName
+
+Specific version
+
+npm i packageName@1.20.4
+
+Uninstall
+
+npm uninstall packageName
+
+dependencies
+
+-> Application run karne ke liye required packages.
+
+devDependencies
+
+-> Sirf development ke time required.
+-> Production me normally install nahi hote.
+
+Scripts
+
+npm start
+-> Predefined command
+
+npm test
+-> Predefined testing command
+
+npm run customCommand
+-> Custom scripts run karne ke liye.
+
+=========================================================================================================================
+
+=================================================
+EXPRESS
+=================================================
+
+Express ek Node.js framework hai.
+
+Ye request, response, routing, middleware aur server management ko easy banata hai.
+
+Framework
+
+-> Ek fixed flow provide karta hai.
+-> Implementation tum apne hisab se kar sakte ho.
+
+=========================================================================================================================
+
+=================================================
+MIDDLEWARE
+=================================================
+
+Request aur Route ke beech chalne wala function.
+
+Kaam complete hone ke baad next() call karta hai.
+
+Example
+
+app.use(function(req,res,next){
+
+    console.log("Middleware");
+
+    next();
+
+})
+
+Har request par middleware execute hota hai.
+
+=========================================================================================================================
+
+=================================================
+FORM HANDLING
+=================================================
+
+Browser se data encoded format me aata hai.
+
+Readable banane ke liye
+
+app.use(express.json())
+
+-> JSON data parse karta hai.
+
+app.use(express.urlencoded({extended:true}))
+
+-> Form data parse karta hai.
+
+=========================================================================================================================
+
+=================================================
+STATIC FILES
+=================================================
+
+const path=require("path")
+
+app.use(express.static(path.join(__dirname,"public")))
+
+Public folder me
+
+CSS
+
+JS
+
+Images
+
+Fonts
+
+rakhte hain.
+
+=========================================================================================================================
+
+=================================================
+VIEW ENGINE
+=================================================
+
+app.set("view engine","ejs")
+
+Render
+
+res.render("index")
+
+EJS
+
+<% %>
+
+-> JavaScript
+
+<%= %>
+
+-> Value print karna
+
+=========================================================================================================================
+
+=================================================
+DYNAMIC ROUTE
+=================================================
+
+Example
+
+/profile/:author
+
+/profile/:author/:age
+
+Access
+
+req.params.author
+
+req.params.age
+
+=========================================================================================================================
+
+=================================================
+FORM POST
+=================================================
+
+app.post("/create",function(req,res){
+
+})
+
+Form ka data
+
+req.body
+
+me milta hai.
+
+=========================================================================================================================
+
+=================================================
+DATABASE
+=================================================
+
+Database
+
+-> Data permanently store karta hai.
+
+Types
+
+1 SQL
+
+-> Table structure
+
+2 NoSQL
+
+-> Object / Document structure
+
+MongoDB
+
+Database
+
+↓
+
+Collection
+
+↓
+
+Document
+
+=========================================================================================================================
+
+=================================================
+MONGOOSE
+=================================================
+
+Database Connect
+
+mongoose.connect("mongodb://localhost:27017/database")
+
+Create Collection
+
+mongoose.model()
+
+Create Document
+
+model.create()
+
+Read
+
+model.find()
+
+model.findOne()
+
+Update
+
+model.findOneAndUpdate()
+
+Delete
+
+model.findOneAndDelete()
+
+=========================================================================================================================
+
+=================================================
+AUTHENTICATION
+=================================================
+
+Authentication
+
+-> User valid hai ya nahi.
+
+Login se Logout tak ka time
+
+Session
+
+Password Encrypt
+
+bcrypt.genSalt()
+
+bcrypt.hash()
+
+Password Compare
+
+bcrypt.compare()
+
+Cookie Send
+
+res.cookie()
+
+Cookie Read
+
+req.cookies
+
+JWT Token
+
+Create
+
+jwt.sign()
+
+Verify
+
+jwt.verify()
+
+=========================================================================================================================
+
+=================================================
+AUTHORIZATION
+=================================================
+
+Authentication
+
+✔ User login hai ya nahi.
+
+Authorization
+
+✔ User kisi kaam ki permission rakhta hai ya nahi.
+
+Example
+
+Basar login hai.
+
+Lekin Basar dusre user ki post delete nahi kar sakta.
+
+Industry Standard
+
+1 Verify JWT
+
+2 Logged-in user nikalo
+
+3 Check
+
+post.user.equals(req.user.id)
+
+4 Same
+
+Allow
+
+5 Different
+
+403 Forbidden
+
+Authentication != Authorization
+
+=========================================================================================================================
+
+=================================================
+JWT BEST PRACTICE
+=================================================
+
+❌
+
+jwt.sign({
+
+email:user.email
+
+})
+
+✔
+
+jwt.sign({
+
+id:user._id
+
+})
+
+Reason
+
+Email change ho sakta hai.
+
+MongoDB _id nahi badalta.
+
+Middleware
+
+const data=jwt.verify(token,"secret")
+
+req.user=data
+
+Ab har route me
+
+req.user.id
+
+available rahega.
+
+=========================================================================================================================
+
+=================================================
+SECURITY
+=================================================
+
+Kabhi bhi browser par trust mat karo.
+
+Browser se koi bhi custom request bhej sakta hai.
+
+Har protected route me check karo
+
+✔ Login
+
+✔ Ownership
+
+✔ Permission
+
+Sensitive information
+
+Email
+
+Role
+
+Admin
+
+Client URL me mat bhejo.
+
+=========================================================================================================================
+
+=================================================
+POPULATE
+=================================================
+
+Current Method
+
+User find
+
+↓
+
+Har user ki post alag query
+
+↓
+
+100 Users
+
+↓
+
+101 Queries
+
+Industry Method
+
+postModel.find().populate("user")
+
+Output
+
+{
+
+POSTS:"Hello",
+
+user:{
+
+username:"Basar"
+
+}
+
+}
+
+Sirf 1 query.
+
+=========================================================================================================================
+
+=================================================
+DOM NAVIGATION
+=================================================
+
+parentElement
+
+Current element ka parent.
+
+children
+
+Saare direct children.
+
+firstElementChild
+
+First child.
+
+lastElementChild
+
+Last child.
+
+previousElementSibling
+
+Current element ka previous sibling.
+
+nextElementSibling
+
+Current element ka next sibling.
+
+closest(selector)
+
+Nearest matching parent return karta hai.
+
+Example
+
+button.closest(".post")
+
+Industry me bahut use hota hai.
+
+=========================================================================================================================
+
+=================================================
+classList
+=================================================
+
+Check
+
+element.classList.contains("edit-btn")
+
+Add
+
+element.classList.add()
+
+Remove
+
+element.classList.remove()
+
+Toggle
+
+element.classList.toggle()
+
+contains() use karna className compare karne se better hai.
+
+=========================================================================================================================
+
+=================================================
+COMMON MISTAKES (TODAY)
+=================================================
+
+❌ isLoggedIn sirf login check karta hai.
+
+✔ Ownership alag check karni padti hai.
+
+--------------------------------------------------
+
+❌ URL me email bhejna.
+
+✔ JWT se user identify karo.
+
+--------------------------------------------------
+
+❌ Hardcoded URL
+
+http://127.0.0.1:5173
+
+✔ Relative path
+
+/post/edit
+
+--------------------------------------------------
+
+❌ Global Variable
+
+postId=10
+
+✔
+
+let postId=10
+
+--------------------------------------------------
+
+❌ className=="edit-btn"
+
+✔
+
+classList.contains("edit-btn")
+
+--------------------------------------------------
+
+❌ Multiple database queries
+
+✔
+
+populate()
+
+--------------------------------------------------
+
+❌ Client par trust karna.
+
+✔
+
+Server side verification.
+
+=========================================================================================================================
+
+=================================================
+IMPORTANT EXPRESS METHODS
+=================================================
+
+res.send()
+
+-> Data bhejna.
+
+res.render()
+
+-> EJS page render karna.
+
+res.redirect()
+
+-> Browser ko dusre route par bhejna.
+
+next()
+
+-> Next middleware execute karna.
+
+=========================================================================================================================
+
+=================================================
+REMEMBER
+=================================================
+
+Authentication
+=
+Who are you?
+
+Authorization
+=
+What are you allowed to do?
+
+Middleware
+=
+Request ke beech me chalne wala function.
+
+Populate
+=
+Reference data automatically laata hai.
+
+JWT
+=
+User identity store karta hai.
+
+Cookie
+=
+Browser me token store karti hai.
+
+MongoDB
+=
+Database → Collection → Document
+
+Express
+=
+Request aur Response ko manage karta hai.
+
+=================================================================================================================================
+multer
+=================================================================================================================================
+
+multer
+->file upload hoti hai
+
+enctype="multipart/form-data"
+->file ko kayi part me todta hai
+
+const path =require('path')
+const crypto=require('crypto')
+const multer = require('multer')
+->multer ke liye imp required
+
+
+const storage=multer.diskStorage({
+    destination:function (req,file,cb) {
+        cb(null,'./public/images')
+    },
+    filename:function (req,file,cb) {
+    crypto.randomBytes(12,function (err,bytes) {
+        const fn=bytes.toString('hex')+path.extname(file.originalname)
+        cb(null,fn)
+    })
+    }
+})
+
+const upload=multer({"storage":storage})
+ upload.single('avatar')
+ ->app.post me use karte hai multer chalane ke liye
+
+ promise.all
+ =
+ ->multiple promises ko parallel chalata hai
+ ->tab tak wait karta hai jab tak sab promises resolve ho jayn
+ ->agar ek bhi reject ho to promise.all reject ho jaata hai
+ ->Promise.all([promise1, promise2, promise3])
+ ->returns array of results jab sab promises resolve ho jayn
+ await ownermodel.findByIdAndUpdate(product.admin, {
+        $pull: { products: productid }
+    });
+=to add all element of an array
+
+ const totalInventoryValue=prices.reduce((acc, curr) => acc + curr, 0);

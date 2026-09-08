@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>|| 'Shop Products | NO-COMMERCE'</title>
+  <link rel="stylesheet" href="/css/product.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Remix Icons for Modern Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">NO-COMMERCE</a>
+      <nav class="nav-links">
+        <a href="/" class="nav-item">Home</a>
+        <a href="/login/<%=user._id%>/cart" class="nav-item cart-link">
+          <i class="ri-shopping-bag-3-line"></i> Cart
+        </a>
+        <a href="/login/profile/id/<%=user._id%>" class="nav-item">
+          <i class="ri-user-3-line"></i> My Account
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shop-container">
+    
+    <!-- Controls Sidebar / Toolbar -->
+    <aside class="controls-bar">
+      <div class="control-group">
+        <label for="sortSelect" class="control-label"><i class="ri-sort-asc"></i> Sort By:</label>
+        <form action="/login/product/sort/<%=user._id%>" method="post">
+            <select name="sortingOpt" id="sortSelect" class="custom-select" onchange="this.form.submit()">
+               <option value="default" <%= typeof opt !== 'undefined' && opt === 'default' ? 'selected' : '' %>>Default</option>
+               <option value="low" <%= typeof opt !== 'undefined' && opt === 'low' ? 'selected' : '' %>>Price: Low to High</option>
+               <option value="high" <%= typeof opt !== 'undefined' && opt === 'high' ? 'selected' : '' %>>Price: High to Low</option>
+            </select>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Product Grid -->
+    <section class="products-grid" id="productsGrid">
+      <% if (products.length > 0) { %>
+        <% products.forEach(product => { %>
+          <a href="/login/product/<%=user._id%>/<%=product._id%>" class="product-card">
+            
+            <div class="product-img-wrapper">
+              <img src="/productImage/<%=product.image%>" loading="lazy">
+              <% if (product.discount > 0) { %>
+                <span class="badge discount-badge">-<%= product.discount %>% OFF</span>
+              <% } %>
+            </div>
+
+            <div class="product-details">
+              <h3 class="product-title"><%= product.name %></h3>
+              
+              <div class="product-bottom">
+                <div class="price-container">
+                  <% const finalPrice = Math.round(product.price - (product.price * (product.discount || 0)) / 100); %>
+                  <span class="current-price"><%=finalPrice%></span>
+                  <% if (product.price) { %>
+                    <span class="original-price"><%=product.price%></span>
+                  <% } %>
+                </div>
+
+                <form action="/login/<%=user._id%>/product/<%=product._id%>/addToCart" method="POST">
+                  <input type="hidden" name="productId" value="<%= product._id %>">
+                  <button type="submit" class="add-cart-btn" title="Add to Cart">
+                    <i class="ri-shopping-cart-2-line"></i> Add
+                  </button>
+                </form>
+              </div>
+            </div>
+
+          </a>
+        <% }) %>
+      <% } else { %>
+        <div class="no-products">
+          <i class="ri-inbox-line"></i>
+          <p>No products found!</p>
+        </div>
+      <% } %>
+    </section>
+
+  </main>
+
+  <script src="/js/product.js"></script>
+</body>
+</html>

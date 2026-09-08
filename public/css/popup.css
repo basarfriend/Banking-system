@@ -1,0 +1,164 @@
+/* ==========================================================================
+   1. SYSTEM PARAMETERS & ROOT VARIABLES
+   ========================================================================== */
+@import url('https://googleapis.com');
+
+:root {
+  /* Global Colors */
+  --bg: #e9eef5;
+  --ink: #172033;
+  --muted: #687386;
+  --accent: #4361ee;
+  --success: #16835b;
+  
+  /* Glassmorphism Foundations */
+  --shadow-dark: rgba(62, 78, 105, .18);
+  --shadow-light: rgba(255, 255, 255, .9);
+  --border-glass: 1px solid rgba(255, 255, 255, .86);
+  
+  --radius-lg: 24px;
+  --radius-sm: 12px;
+}
+
+/* ==========================================================================
+   2. GLOBAL RESET & FLEXIBLE LAYOUT
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.55;
+  background: radial-gradient(circle at 5% 0%, #fff 0, transparent 28rem),
+              radial-gradient(circle at 95% 90%, rgba(67, 97, 238, .08), transparent 24rem),
+              linear-gradient(145deg, #f9fbfe, var(--bg) 55%, #dfe6ef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+/* ==========================================================================
+   3. SUCCESS CONTAINER PANEL
+   ========================================================================== */
+.success-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(460px, 100%);
+  padding: clamp(2rem, 6vw, 3.5rem) 2rem;
+  border: var(--border-glass);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(237, 242, 248, .86));
+  box-shadow: 14px 18px 34px var(--shadow-dark), 
+              -10px -10px 22px var(--shadow-light), 
+              inset 0 1px 0 #fff;
+  animation: modalEntrance 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Entrance Animation */
+@keyframes modalEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   4. TYPOGRAPHY & VISUALS
+   ========================================================================== */
+.success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(22, 131, 91, 0.1);
+  color: var(--success);
+  font-size: 1.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(22, 131, 91, 0.15);
+  box-shadow: 0 8px 20px rgba(22, 131, 91, 0.1);
+}
+
+h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+p {
+  margin: 0 0 2rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+/* ==========================================================================
+   5. CTA NAVIGATION BUTTON
+   ========================================================================== */
+.success-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 160px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.5rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(145deg, #5a74ff, #263fc4);
+  box-shadow: 0 4px 0 #20349b, 
+              0 8px 14px rgba(39, 61, 190, .2), 
+              inset 0 1px 0 rgba(255, 255, 255, .35);
+  transition: transform .16s ease, box-shadow .16s ease, filter .2s ease;
+}
+
+.success-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+
+.success-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #20349b, 
+              0 3px 6px rgba(39, 61, 190, .1);
+}
+
+/* ==========================================================================
+   6. ACCESS PREFERENCES
+   ========================================================================== */
+@media(prefers-reduced-motion: reduce) {
+  .success-container {
+    animation: none !important;
+  }
+  *, *::before, *::after {
+    transition: none !important;
+  }
+}

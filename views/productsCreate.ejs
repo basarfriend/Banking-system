@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>create a product</title>
+    <link rel="stylesheet" href="/css/productsCreate.css">
+</head>
+<body>
+    <main>
+        <h1>Create Product</h1>
+        <form method="POST" action="/owner/<%=admin._id%>/productsCreate/done" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" id="name" name="name"  placeholder="Enter product name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="detail">Product Detail</label>
+                <textarea id="detail" name="details"  placeholder="Enter product details" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" id="price" name="price"  step="0.01" min="0" placeholder="Enter price" required>
+            </div>
+
+            <div class="form-group">
+                <label for="product-image">Product Image</label>
+                <input type="file" name="image" required>
+            </div>
+
+            <div class="form-group">
+                <label for="discount">Discount (%)</label>
+                <input type="number" id="discount" name="discount" step="0.01" min="0" max="100" placeholder="Enter discount percentage" required>
+            </div>
+           
+            <div class="form-group">
+                <label for="stocks">stocks</label>
+                <input type="number" id="stocks" name="stocks"  step="0.01" min="0" placeholder="How much stocks have you?" required>
+            </div>
+
+            <div class="form-group">
+                <label for="panelColor">Panel Color</label>
+                <input type="color" id="panelColor" name="panelColor" value="#667eea" required>
+            </div>
+
+            <button type="submit">Create Product</button>
+        </form>
+    </main>
+</body>
+</html>

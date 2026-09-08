@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Shopping Cart</title>
+    <link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+    <main class="cart-container">
+    <!-- Modern Structural Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <div class="breadcrumb-container">
+            <a href="/">Home</a>
+        </div>
+    </nav>
+        <h1>Shopping Cart (<%= cartItems.length %> items)</h1>
+        
+        <% if (cartItems.length === 0) { %>
+            <div class="empty-cart">
+                <p>Your cart is empty.</p>
+                <a href="/login/product/<%=user._id%>" class="btn">Continue Shopping</a>
+            </div>
+        <% } else { %>
+            <div class="cart-layout">
+                <!-- Cart Items List -->
+                <section class="cart-items">
+                    <% cartItems.forEach(item => { %>
+                        <a href="/login/product/<%=user._id%>/<%=item._id%>">
+                            
+                            <div class="cart-item" data-id="<%= item.id %>">
+                                <!-- Product Image -->
+                                <div class="item-image">
+                                    <img src="/productImage/<%= item.image %>" alt="<%= item.name %>">
+                                </div>
+                                
+                            <!-- Product Details -->
+                            <div class="item-details">
+                                <h2 class="item-name"><%= item.name %></h2>
+                                <p class="item-specs limit-details"><%= item.details %></p>
+
+                                <!-- Stock Status -->
+                                <p class="stock-status <%= item.stocks > 0 ? 'in-stock' : 'out-of-stock' %>">
+                                    <%= item.stocks > 0 ? `In Stock (${item.stocks} left)` : 'Out of Stock' %>
+                                </p>
+                            </div>
+                            
+                            <!-- Price & Actions -->
+                            <div class="item-pricing">
+                                <div class="price-box">
+                                    <!-- Calculating discounted price -->
+                                    <% let discountPrice = item.price - (item.price * (item.discount / 100)); %>
+                                    <span class="current-price">₹<%= discountPrice.toLocaleString() %></span>
+                                    <span class="original-price">₹<%= item.price.toLocaleString() %></span>
+                                    <span class="discount-tag"><%= item.discount %>% OFF</span>
+                                </div>
+                                <form action="/<%=user._id%>/remove/cart/<%=item.id%>" method="post">
+                                    <div class="item-actions">
+                                        <button class="btn-remove" onclick="removeItem('<%= item.id %>')">Remove</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </a>
+                    <% }) %>
+                </section>
+
+                <!-- Order Summary Sidebar -->
+                <aside class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Price Summary</span>
+                        <% 
+                            let totalOriginal = cartItems.reduce((acc, item) => acc + item.price, 0);
+                            let totalDiscounted = cartItems.reduce((acc, item) => acc + (item.price - (item.price * (item.discount / 100))), 0);
+                            let totalSavings = totalOriginal - totalDiscounted;
+                        %>
+                        <span>₹<%= totalOriginal.toLocaleString() %></span>
+                    </div>
+                    <div class="summary-row text-success">
+                        <span>Discount</span>
+                        <span>- ₹<%= totalSavings.toLocaleString() %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Charges</span>
+                        <span class="text-success">FREE</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row total-row">
+                        <span>Total Amount</span>
+                        <span>₹<%= totalDiscounted.toLocaleString() %></span>
+                    </div>
+                    <form action="/login/<%=user._id%>/buyCart" method="post">
+                        <button class="btn btn-checkout">Proceed to Checkout</button>
+                    </form>
+                </aside>
+            </div>
+        <% } %>
+    </main>
+</body>
+</html>
